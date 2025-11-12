@@ -15,6 +15,7 @@ export interface Graph {
   edges: EdgeData[];
   selectedNode: NodeData | null;
   path: string;
+  editingNode: boolean;
   aboveSupportedLimit: boolean;
 }
 
@@ -36,6 +37,7 @@ interface GraphActions {
   setDirection: (direction: CanvasDirection) => void;
   setViewPort: (ref: ViewPort) => void;
   setSelectedNode: (nodeData: NodeData) => void;
+  setIsEditingNode: (value: boolean) => void;
   focusFirstNode: () => void;
   toggleFullscreen: (value: boolean) => void;
   zoomIn: () => void;
@@ -47,8 +49,10 @@ interface GraphActions {
 
 const useGraph = create<Graph & GraphActions>((set, get) => ({
   ...initialStates,
+  editingNode: false,
   clearGraph: () => set({ nodes: [], edges: [], loading: false }),
   setSelectedNode: nodeData => set({ selectedNode: nodeData }),
+  setIsEditingNode: value => set({ editingNode: value }),
   setGraph: (data, options) => {
     const { nodes, edges } = parser(data ?? useJson.getState().json);
 

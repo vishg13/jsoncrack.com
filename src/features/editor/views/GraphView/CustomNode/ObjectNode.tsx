@@ -4,6 +4,8 @@ import { NODE_DIMENSIONS } from "../../../../../constants/graph";
 import type { NodeData } from "../../../../../types/graph";
 import { TextRenderer } from "./TextRenderer";
 import * as Styled from "./styles";
+import { useModal } from "../../../../../store/useModal";
+import useGraph from "../stores/useGraph";
 
 type RowProps = {
   row: NodeData["text"][number];
@@ -43,6 +45,34 @@ const Node = ({ node, x, y }: CustomNodeProps) => (
     y={0}
     $isObject
   >
+    {/* Edit button (pointer-events enabled) */}
+    <button
+      aria-label="Edit node"
+      onClick={e => {
+        e.stopPropagation();
+        const setVisible = useModal.getState().setVisible;
+        const setSelectedNode = useGraph.getState().setSelectedNode;
+        const setIsEditingNode = useGraph.getState().setIsEditingNode;
+        if (setSelectedNode) setSelectedNode(node as NodeData);
+        if (setIsEditingNode) setIsEditingNode(true);
+        setVisible("NodeModal", true);
+      }}
+      style={{
+        position: "absolute",
+        top: 2,
+        right: 2,
+        zIndex: 5,
+        pointerEvents: "all",
+        fontSize: 10,
+        padding: "2px 6px",
+        borderRadius: 3,
+        border: "none",
+        background: "rgba(0,0,0,0.06)",
+        cursor: "pointer",
+      }}
+    >
+      Edit
+    </button>
     {node.text.map((row, index) => (
       <Row key={`${node.id}-${index}`} row={row} x={x} y={y} index={index} />
     ))}
